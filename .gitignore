@@ -1,0 +1,47 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+.pytest_cache/
+.cache/
+
+# --- Entornos virtuales ---
+.env
+.venv
+venv/
+env/
+
+# --- Archivos Jupyter ---
+.ipynb_checkpoints/
+
+# --- Salidas y datos generados ---
+Output/
+*.txt
+*.dat
+*.out
+
+# --- Archivos temporales / logs ---
+*.log
+*.tmp
+*.bak
+
+# --- Archivos de sistema / IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Archivos de compilación (Makefile) ---
+/build/              
+*.o                
+*.a                 
+*.so                
+/simulacion
+
+# --- Archivos adicionales generados por simulación ---
+Output/simulation/*.txt
+Output/tests/*.output
+Grapher/output

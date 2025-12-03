@@ -1,0 +1,31 @@
+{
+  "io": {
+    "input_file": "data/estabilización_vaso.txt"
+  },
+
+  "kernel": {
+    "type": "cubicSpline",
+    "h_factor": 1.1
+  },
+
+  "neighbors": {
+    "search_method": "brute_force"
+  },
+
+  "physics": {
+    "density_type": "normalized",
+    "gravity_magnitude": 9.87,
+    "EoS": "Monaghan"
+  },
+
+  "integrator": {
+    "method": "leapfrog",
+    "dt": 0.0005,
+    "n_steps": 3000
+  },
+
+  "simulation": {
+    "output_frequency": 1,
+    "enable_neighbor_test": true
+  }
+}
