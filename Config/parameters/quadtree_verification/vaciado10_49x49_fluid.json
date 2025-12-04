@@ -1,6 +1,6 @@
 {
-  "nx": 50,
-  "ny": 50,
+  "nx": 49,
+  "ny": 49,
   "flag_N": "True",
   "espaciado": 2.5e-05,
   "vertices": {
