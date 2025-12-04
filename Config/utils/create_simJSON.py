@@ -10,6 +10,7 @@ def create_simulation_config(
     c: float,
     steps: int,
     neighbor_method: str = None,
+    output_tests: str = None,
     project_root: Path = None
 ):
     """
@@ -22,6 +23,8 @@ def create_simulation_config(
         B (float): Valor del parámetro B a modificar.
         c (float): Valor del parámetro c a modificar.
         steps (int): Número de pasos n_steps.
+        neighbor_method: Método de busqueda de vecinos (brute force o quadtree).
+        output_tests: Carpeta de salida de los test de vecinos y de kernel.
         project_root (Path, opcional): Si no se especifica, se detecta automáticamente.
     """
 
@@ -49,6 +52,7 @@ def create_simulation_config(
     params["physics"]["eos_params"]["monaghan"]["B"] = float(B)
     params["integrator"]["n_steps"] = int(steps)
     params["neighbors"]["search_method"] = str(neighbor_method)
+    params["kernel"]["output_dir"]=str(output_tests)
 
     # --- 6. Crear carpeta "Output" del experimento ---
     sim_output_dir = experiment_root / "Output"
