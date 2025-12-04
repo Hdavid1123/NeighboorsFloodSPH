@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from pathlib import Path
 import glob
 import os
@@ -47,8 +48,7 @@ def analyze_density_simulation(sim_folder: Path,
         'valor_promedio_threshold' : valor promedio en ese punto
     """
 
-    # --- 1. Buscar archivos ---
-    output_folder = sim_folder / "Output"
+    output_folder = sim_folder
     archivos = sorted(glob.glob(os.path.join(output_folder, "state_*.txt")))
     
     if not archivos:
@@ -57,7 +57,6 @@ def analyze_density_simulation(sim_folder: Path,
     promedios_rho = []
     indices = []
 
-    # --- 2. Leer cada archivo y extraer promedio ---
     for archivo in archivos:
         df = pd.read_csv(archivo, sep=r"\s+", header=0)
         promedios_rho.append(df["rho"].mean())
@@ -67,47 +66,36 @@ def analyze_density_simulation(sim_folder: Path,
     y = np.array(promedios_rho)
     t = np.array(indices)
 
-    # --- 3. Suavizado ---
     y_smooth = savgol_filter(y, window_length=window_length, polyorder=polyorder)
 
-    # --- 4. Detección de picos (máximos y mínimos) ---
     pmax, _ = find_peaks(y_smooth, prominence=prominence)
     pmin, _ = find_peaks(-y_smooth, prominence=prominence)
 
     picos = np.sort(np.concatenate([pmax, pmin]))
 
-    # --- 5. Filtrar picos demasiado cercanos ---
     picos_filtrados = [picos[0]]
     for i in range(1, len(picos)):
         if picos[i] - picos_filtrados[-1] > min_peak_distance:
             picos_filtrados.append(picos[i])
     picos_filtrados = np.array(picos_filtrados)
 
-    # --- 6. Generar duplas ---
     duplas = [
         [picos_filtrados[i], picos_filtrados[i + 1]]
         for i in range(len(picos_filtrados) - 1)
     ]
 
-    # --- 7. Promedio en cada dupla ---
     promedio_duplas = [
         float(np.mean([y_smooth[a], y_smooth[b]]))
-        for (a, b) in duplas
-    ]
+        for (a, b) in duplas]
 
-    # --- 8. Amplitudes ---
-    amplitudes = [
-        float(np.abs(y_smooth[a] - y_smooth[b]))
-        for (a, b) in duplas
-    ]
+    amplitudes = [float(np.abs(y_smooth[a] - y_smooth[b]))
+                  for (a, b) in duplas]
 
-    # --- 9. Variación porcentual ---
     variacion_amp_pct = [
         100 * amplitudes[i] / promedio_duplas[i]
         for i in range(len(duplas))
     ]
 
-    # --- 10. Buscar primer índice donde la variación < threshold ---
     index_threshold = None
     dupla_threshold = None
     valor_promedio_threshold = None
@@ -119,7 +107,6 @@ def analyze_density_simulation(sim_folder: Path,
             valor_promedio_threshold = promedio_duplas[i]
             break
 
-    # --- 11. Empaquetar resultados ---
     return {
         "t": t,
         "rho_avg": y,
@@ -133,3 +120,23 @@ def analyze_density_simulation(sim_folder: Path,
         "dupla_threshold": dupla_threshold,
         "valor_promedio_threshold": valor_promedio_threshold
     }
+    
+def plot_density_with_peaks(result):
+    t = result["t"]
+    y = result["rho_avg"]
+    y_smooth = result["y_smooth"]
+    peaks = result["peaks_filtered"]
+
+    plt.figure(figsize=(10,5))
+    plt.plot(t, y, label="Densidad promedio original", alpha=0.4)
+    plt.plot(t, y_smooth, label="Señal suavizada", linewidth=2)
+    plt.scatter(t[peaks], y_smooth[peaks], color="red", s=20, label="Picos detectados")
+
+    plt.xlabel("Índice de estado (tiempo relativo)")
+    plt.ylabel("Densidad promedio")
+    plt.title("Evolución de la densidad con picos detectados")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
