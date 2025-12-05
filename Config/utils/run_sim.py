@@ -88,9 +88,6 @@ def run_single_simulation(
     finally:
         err_log.close()
 
-import subprocess
-from pathlib import Path
-import time
 
 
 def run_all_simulations(
@@ -100,39 +97,24 @@ def run_all_simulations(
     pattern: str = "experiment_B*/params.json",
     project_root: Path = None
 ):
-    """
-    Ejecuta todas las simulaciones encontradas dentro de experiment_root,
-    leyendo stdout en tiempo real, guardando logs y manejando timeout.
-
-    Parámetros:
-        experiment_root (Path): Carpeta donde están los experimentos.
-        sim_executable (Path): Ruta al ejecutable de simulación.
-        timeout_seconds (int): Tiempo máximo de ejecución.
-        pattern (str): Patrón glob para detectar params.json.
-        project_root (Path): Directorio donde se corre el ejecutable.
-                             Si no se da, usa el directorio del proyecto.
-    """
-
-    # --- 1. Resolver project_root automáticamente ---
     if project_root is None:
         project_root = Path().resolve().parent
 
-    # --- 2. Encontrar .json de simulación ---
     param_files = sorted(experiment_root.glob(pattern))
 
     print(f"\n🔍 Se encontraron {len(param_files)} simulaciones para ejecutar.\n")
     if not param_files:
-        return
+        return []
 
     def run_with_timeout(proc, timeout):
-        """Maneja el timeout de Popen."""
         try:
             proc.wait(timeout=timeout)
         except subprocess.TimeoutExpired:
             proc.kill()
             raise
 
-    # --- 3. Ejecutar todas las simulaciones ---
+    elapsed_times = []
+
     for param_file in param_files:
         run_dir = param_file.parent
         run_name = run_dir.name
@@ -148,7 +130,6 @@ def run_all_simulations(
         start_time = time.time()
 
         try:
-            # Iniciar proceso
             proc = subprocess.Popen(
                 cmd,
                 stdout=subprocess.PIPE,
@@ -157,21 +138,21 @@ def run_all_simulations(
                 cwd=project_root
             )
 
-            # ---- Lectura de STDOUT en tiempo real ----
+            # Leer stdout en tiempo real
             with open(stdout_path, "w") as out_file:
                 for line in iter(proc.stdout.readline, ""):
-                    print(line, end="")      # Mostrar en consola
-                    out_file.write(line)     # Guardar en archivo
+                    print(line, end="")
+                    out_file.write(line)
 
-            # ---- Lectura final de STDERR ----
             stderr_output = proc.stderr.read()
             if stderr_output:
                 print("\n[STDERR]\n" + stderr_output)
                 err_log.write(stderr_output)
 
-            # ---- Manejo del timeout ----
             run_with_timeout(proc, timeout_seconds)
             elapsed = time.time() - start_time
+
+            elapsed_times.append(elapsed)
 
             if proc.returncode == 0:
                 print(f"\n  ✅ Finalizado correctamente ({elapsed:.1f} s)\n")
@@ -181,6 +162,9 @@ def run_all_simulations(
         except subprocess.TimeoutExpired:
             print(f"\n  ❌ TIMEOUT tras {timeout_seconds}s — simulación detenida")
             err_log.write(f"\n[ERROR] Timeout tras {timeout_seconds}s\n")
+            elapsed_times.append(None)
 
         finally:
             err_log.close()
+
+    return elapsed_times
