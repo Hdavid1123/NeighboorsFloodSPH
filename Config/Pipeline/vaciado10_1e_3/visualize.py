@@ -1,4 +1,4 @@
-from utils.plot_ics import plot_ics
+from Config.utils.plot_ics import plot_ics
 
 def show_ics_and_confirm(txt_file, particle_size=6):
     while True:

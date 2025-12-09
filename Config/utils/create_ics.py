@@ -6,8 +6,7 @@ def create_ics_txt(
     boundary_path: str,
     fluid_path: str,
     output_path: str,
-    output_log_path: str,
-    main_script_path: str
+    output_log_path: str
 ):
     """
     Ejecuta main.py con rutas absolutas.
@@ -17,14 +16,13 @@ def create_ics_txt(
         fluid_path (str): Ruta absoluta del JSON de fluido.
         output_path (str): Ruta absoluta del archivo .txt de salida.
         output_log_path (str): Ruta absoluta del archivo de log.
-        main_script_path (str): Ruta absoluta del archivo main.py.
     """
 
     boundary_path = Path(boundary_path)
     fluid_path = Path(fluid_path)
     output_path = Path(output_path)
     output_log_path = Path(output_log_path)
-    main_script_path = Path(main_script_path)
+    main_script_path = Path("/media/hvarkaed/a2e590e8-6eb4-4da7-a766-06b1247531ca/NeighboorsFloodSPH/InitialConditions/main.py")
 
     output_dir = output_path.parent
     output_dir.mkdir(parents=True, exist_ok=True)

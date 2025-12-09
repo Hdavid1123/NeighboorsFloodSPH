@@ -18,12 +18,10 @@ def create_fluid_json(N, output_path: Path):
             "sup-izq":  [5e-5,   4.5e-4]
         }
     }
-
     with open(output_path, "w") as f:
         json.dump(data, f, indent=2)
     
     return esp
-
 
 def create_boundary_json(esp_fluid, output_path: Path):
     spacing = esp_fluid / 2
