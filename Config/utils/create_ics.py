@@ -3,67 +3,59 @@ from pathlib import Path
 import pandas as pd
 
 def create_ics_txt(
-    boundary: str,
-    fluid: str,
-    output_name: str,
-    output_log: str,
-    project_root: Path = None
+    boundary_path: str,
+    fluid_path: str,
+    output_path: str,
+    output_log_path: str,
+    main_script_path: str
 ):
     """
-    Ejecuta main.py con los parámetros indicados.
+    Ejecuta main.py con rutas absolutas.
     
     Parámetros:
-        boundary (str): Nombre del archivo JSON de frontera.
-        fluid (str): Nombre del archivo JSON de fluido.
-        output_name (str): Nombre del archivo de salida (ej: "sim.txt").
-        output_log (str): Nombre del archivo de resumen (ej: "log.json").
-        project_root (Path, opcional): Ruta raíz del proyecto.
-                                        Si no se especifica, se detecta automáticamente.
+        boundary_path (str): Ruta absoluta del JSON de frontera.
+        fluid_path (str): Ruta absoluta del JSON de fluido.
+        output_path (str): Ruta absoluta del archivo .txt de salida.
+        output_log_path (str): Ruta absoluta del archivo de log.
+        main_script_path (str): Ruta absoluta del archivo main.py.
     """
 
-    # --- 1. Detectar PROJECT_ROOT automáticamente ---
-    if project_root is None:
-        cwd = Path.cwd()
-        project_root = cwd.parents[0] if cwd.name == "Config" else cwd
+    boundary_path = Path(boundary_path)
+    fluid_path = Path(fluid_path)
+    output_path = Path(output_path)
+    output_log_path = Path(output_log_path)
+    main_script_path = Path(main_script_path)
 
-    # --- 2. Rutas principales ---
-    main_script = project_root / "InitialConditions" / "main.py"
-    boundary_path = project_root / "Config" / "parameters" / boundary
-    fluid_path = project_root / "Config" / "parameters" / fluid
-    output_dir = project_root / "Output" / "init_cond"
+    output_dir = output_path.parent
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # --- 3. Mostrar configuración ---
-    print("[INFO] Ejecutando main.py con los siguientes parámetros:")
-    print(f"  • Script principal:        {main_script}")
-    print(f"  • Archivo de frontera:     {boundary_path}")
-    print(f"  • Archivo de fluido:       {fluid_path}")
-    print(f"  • Carpeta de salida:       {output_dir}")
-    print(f"  • Nombre archivo salida:   {output_name}")
-    print(f"  • Nombre archivo resumen:  {output_log}")
+    print("[INFO] Ejecutando main.py con rutas absolutas:")
+    print(f"  main.py:      {main_script_path}")
+    print(f"  boundary:     {boundary_path}")
+    print(f"  fluid:        {fluid_path}")
+    print(f"  output txt:   {output_path}")
+    print(f"  output log:   {output_log_path}")
 
-    # --- 4. Ejecutar main.py ---
     result = subprocess.run([
-        "python", str(main_script),
+        "python", str(main_script_path),
         "export",
         "--boundary", str(boundary_path),
         "--fluid", str(fluid_path),
         "--output_dir", str(output_dir),
-        "--output_file", output_name,
-        "--output_logname", output_log
+        "--output_file", output_path.name,
+        "--output_logname", output_log_path.name
     ], capture_output=True, text=True)
 
-    # --- 5. Mostrar resultados ---
     print("\n" + "="*60)
     if result.returncode == 0:
         print("[✓] Ejecución completada correctamente.")
-        print(f"Archivo generado: {output_dir / output_name}")
     else:
         print("[✗] Error durante la ejecución.")
         print("STDOUT:\n", result.stdout)
         print("STDERR:\n", result.stderr)
     print("="*60 + "\n")
 
-    return result.returncode  # Para saber si todo salió bien
+    return result.returncode
 
 
 
