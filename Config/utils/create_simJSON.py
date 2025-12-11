@@ -1,6 +1,7 @@
+# Config/utils/create_simJSON.py
 import json
 from pathlib import Path
-import numpy as np
+
 
 def create_simulation_config(
     experiment_name: str,
@@ -11,50 +12,59 @@ def create_simulation_config(
     steps: int,
     neighbor_method: str = None,
     output_tests: str = None,
-    project_root: Path = None
+    project_root: Path = None,
+    project_dir: Path = None
 ):
     """
-    Crea una carpeta de experimento y genera un archivo params.json
-    modificando solo los parámetros indicados.
-
-    Parámetros:
-        experiment_name (str): Nombre de la carpeta donde se guardará el experimento.
-        base_json (str): Nombre del archivo base dentro de Config/parameters/simulation/.
-        B (float): Valor del parámetro B a modificar.
-        c (float): Valor del parámetro c a modificar.
-        steps (int): Número de pasos n_steps.
-        neighbor_method: Método de busqueda de vecinos (brute force o quadtree).
-        output_tests: Carpeta de salida de los test de vecinos y de kernel.
-        project_root (Path, opcional): Si no se especifica, se detecta automáticamente.
+    Genera params.json dentro de un experimento perteneciente a un proyecto.
     """
 
-    # --- 1. Detectar la ruta raíz del proyecto ---
+    # --- 1. Validaciones ---
     if project_root is None:
-        project_root = Path().resolve().parent
+        raise ValueError("[ERROR] project_root es obligatorio.")
 
-    base_json_path = project_root / "Config" / "parameters" / "simulation" / base_json
+    if project_dir is None:
+        raise ValueError("[ERROR] project_dir es obligatorio.")
 
-    # --- 2. Carpeta raíz donde se almacenan experimentos ---
-    output_root = project_root / "Output"
+    project_root = Path(project_root).resolve()
+    project_dir = Path(project_dir).resolve()
 
-    experiment_root = output_root / experiment_name
+    # --- 2. JSON base (SIEMPRE desde el repo) ---
+    base_json_path = (
+        project_root
+        / "Config"
+        / "parameters"
+        / "simulation"
+        / base_json
+    )
+
+    if not base_json_path.exists():
+        raise FileNotFoundError(
+            f"[ERROR] No existe el JSON base: {base_json_path}"
+        )
+
+    # --- 3. Carpeta del experimento ---
+    experiment_root = project_dir / experiment_name
     experiment_root.mkdir(parents=True, exist_ok=True)
 
-    # --- 3. Leer JSON base ---
+    # --- 4. Leer JSON base ---
     with open(base_json_path, "r") as f:
         base_params = json.load(f)
 
-    # --- 4. Copia profunda del JSON ---
-    params = json.loads(json.dumps(base_params))
+    params = json.loads(json.dumps(base_params))  # copia profunda
 
-    # --- 5. Modificar parámetros seleccionados ---
-    params["physics"]["eos_params"]["monaghan"]["c"] = float(c)
+    # --- 5. Modificar parámetros ---
     params["physics"]["eos_params"]["monaghan"]["B"] = float(B)
+    params["physics"]["eos_params"]["monaghan"]["c"] = float(c)
     params["integrator"]["n_steps"] = int(steps)
-    params["neighbors"]["search_method"] = str(neighbor_method)
-    params["kernel"]["output_dir"]=str(output_tests)
 
-    # --- 6. Crear carpeta "Output" del experimento ---
+    if neighbor_method is not None:
+        params["neighbors"]["search_method"] = str(neighbor_method)
+
+    if output_tests is not None:
+        params["kernel"]["output_dir"] = str(output_tests)
+
+    # --- 6. IO ---
     sim_output_dir = experiment_root / "Output"
     sim_output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -66,6 +76,6 @@ def create_simulation_config(
     with open(param_file, "w") as f:
         json.dump(params, f, indent=2)
 
-    print(f"✅ Archivo generado: {param_file.relative_to(project_root)}")
+    print(f"✅ params.json generado: {param_file.relative_to(project_dir)}")
 
     return param_file
