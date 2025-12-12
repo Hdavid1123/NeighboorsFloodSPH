@@ -10,10 +10,11 @@ def create_simulation_config(
     B: float,
     c: float,
     steps: int,
-    neighbor_method: str = None,
-    output_tests: str = None,
+    dt: float = 1e-5, 
     project_root: Path = None,
-    project_dir: Path = None
+    project_dir: Path = None,
+    output_tests: str = None,
+    neighbor_method: str = None
 ):
     """
     Genera params.json dentro de un experimento perteneciente a un proyecto.
@@ -29,7 +30,7 @@ def create_simulation_config(
     project_root = Path(project_root).resolve()
     project_dir = Path(project_dir).resolve()
 
-    # --- 2. JSON base (SIEMPRE desde el repo) ---
+    # --- 2. JSON base ---
     base_json_path = (
         project_root
         / "Config"
@@ -53,25 +54,27 @@ def create_simulation_config(
 
     params = json.loads(json.dumps(base_params))  # copia profunda
 
-    # --- 5. Modificar parámetros ---
+    # --- 5. Modificar parámetros obligatorios ---
     params["physics"]["eos_params"]["monaghan"]["B"] = float(B)
     params["physics"]["eos_params"]["monaghan"]["c"] = float(c)
     params["integrator"]["n_steps"] = int(steps)
+    params["integrator"]["dt"] = float(dt)
 
+    # --- 6. Parámetros opcionales ---
     if neighbor_method is not None:
         params["neighbors"]["search_method"] = str(neighbor_method)
 
     if output_tests is not None:
         params["kernel"]["output_dir"] = str(output_tests)
 
-    # --- 6. IO ---
+    # --- 7. IO ---
     sim_output_dir = experiment_root / "Output"
     sim_output_dir.mkdir(parents=True, exist_ok=True)
 
     params["io"]["input_file"] = str(input_file)
     params["io"]["output_dir_simulation"] = str(sim_output_dir)
 
-    # --- 7. Guardar params.json ---
+    # --- 8. Guardar params.json ---
     param_file = experiment_root / "params.json"
     with open(param_file, "w") as f:
         json.dump(params, f, indent=2)
