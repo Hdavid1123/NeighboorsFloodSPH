@@ -14,13 +14,13 @@ from Config.Pipeline.vaciado10_1e_3.main_pipe_ics import run_ics_pipeline
 from Config.utils.create_simJSON import create_simulation_config
 
 def logspace_1_4_7():
-    mantissas = [1, 4, 7]
-    decades = range(-5, 1)
+    mantissas = [5]
+    decades = range(-4, 0)
     B = [m * 10**d for d in decades for m in mantissas]
     B.append(10)
     return B
 
-C_VALUES = [1e-3, 1e-5, 1e-4, 1e-2, 1e-1]
+C_VALUES = [1e-5, 1e-4, 1e-3]
 
 
 def extract_last_step(stdout_text: str):
@@ -73,12 +73,16 @@ def run_stability_sweep(
     input_file: Path,
     sim_executable: Path,
     base_json: str,
-    steps: int = 6000,
+    steps: int = 4000,
     timeout_seconds: int = 4000
 ):
     sweep_root = project_dir / "sweep_B_c"
     sweep_root.mkdir(parents=True, exist_ok=True)
-
+    
+    # Preguntar o paso automático
+    ASK_C_CONFIRMATION = False
+    print(f"Preguntar por valor de C {ASK_C_CONFIRMATION}")
+    
     results = []
     B_values = logspace_1_4_7()
 
@@ -89,8 +93,9 @@ def run_stability_sweep(
         print(f"   Total simulaciones: {len(B_values)}")
         print("=" * 60)
 
-        if input("¿Continuar con este valor de c? (Y/N): ").strip().upper() != "Y":
-            continue
+        if ASK_C_CONFIRMATION:
+            if input("¿Continuar con este valor de c? (Y/N): ").strip().upper() != "Y":
+                continue
 
         stable_count = 0
         unstable_count = 0
@@ -109,6 +114,7 @@ def run_stability_sweep(
                 B=B,
                 c=c,
                 steps=steps,
+                dt=5e-6,                     # Modificación un orden menor
                 neighbor_method="quadtree",
                 project_root=PROJECT_ROOT,   # <- para Config/
                 project_dir=project_dir      # <- N_dir

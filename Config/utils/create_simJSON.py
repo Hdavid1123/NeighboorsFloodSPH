@@ -10,7 +10,8 @@ def create_simulation_config(
     B: float,
     c: float,
     steps: int,
-    dt: float = 1e-5, 
+    g: float = -9.81,
+    dt: float = 1e-5,
     project_root: Path = None,
     project_dir: Path = None,
     output_tests: str = None,
@@ -57,6 +58,7 @@ def create_simulation_config(
     # --- 5. Modificar parámetros obligatorios ---
     params["physics"]["eos_params"]["monaghan"]["B"] = float(B)
     params["physics"]["eos_params"]["monaghan"]["c"] = float(c)
+    params["physics"]["gravity_magnitude"] = float(g)
     params["integrator"]["n_steps"] = int(steps)
     params["integrator"]["dt"] = float(dt)
 
