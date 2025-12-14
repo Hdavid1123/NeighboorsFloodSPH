@@ -1,12 +1,16 @@
 #include "physics/acceleration/boundaryInteraction.h"
 #include <cmath>
+#include <iostream>
+#include <fstream>
 
 void boundaryInteraction(std::vector<Particle>& particles, double dr,
                          int nBoundary, int nParticles)
 {
     int n1 = 12, n2 = 4;
-    double D  = 0.01; //0.01 para 1e-3, 1 para 0.1
+    double D  = 0; //0.01 para 1e-3, 1 para 0.1
     double r0 = 0.5 * dr;
+
+    std::cout << "[INFO] El valor de D en boundaryInteraction es: " << D << "\n"; 
 
     // Iterar solo sobre partículas de fluido
     for (int i = nBoundary; i < nParticles; i++) {

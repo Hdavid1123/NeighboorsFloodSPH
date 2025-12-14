@@ -9,7 +9,7 @@ OBJDIR = build
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 # Ejecutable
-TARGET = simulacion
+TARGET = simulacionSinD2
 
 all: $(TARGET)
 
