@@ -78,9 +78,9 @@ void findNeighborsQuadtree(std::vector<Particle>& particles,
     std::vector<particula> pts;
     pts.resize(nParticles);
 
-    const float xmin = 0.0e-3f;
-    const float ymin = -1.5e-3f;
-    const float Lx = 2e-3f;
+    const float xmin = 0.0e-1f;
+    const float ymin = -1.5e-1f;
+    const float Lx = 2e-1f;
     const float Ly = Lx;
     const float invLx = 1.0f / Lx;
     const float invLy = 1.0f / Ly;

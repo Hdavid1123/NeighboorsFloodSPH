@@ -43,6 +43,8 @@ static void computeMonaghanPressure(std::vector<Particle>& particles,
     }
 }
 
+// ----- NO USADA FINALMENTE -------
+
 // --- Implementación de EoS de Korzani (2014) --- 
 // p = rho0 * ca^2/gamma ((rho/rho0)^gamma -1)
 static void computeKorzaniPressure(std::vector<Particle>& particles,

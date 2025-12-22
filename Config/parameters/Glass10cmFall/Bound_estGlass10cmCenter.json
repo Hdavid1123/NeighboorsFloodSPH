@@ -1,0 +1,48 @@
+{
+  "quadrilateros": [
+    {
+      "d1": 0.1,
+      "d2": 0.1,
+      "d3": 0.1,
+      "a1": -90,
+      "a2": 0,
+      "a3": 90,
+      "spacing": 0.00125,
+      "agujeros": [
+        {
+          "lado": "DA",
+          "tam": 0.1,
+          "offset": 0.0
+        },
+        {
+          "lado": "CD",
+          "tam": 0.02,
+          "offset": 0.00125
+        }
+      ]
+    }
+  ],
+  "free_lines": [
+    {
+      "from": "C",
+      "length": 0.1,
+      "angle": -90,
+      "spacing": 0.00125,
+      "name": "E"
+    },
+    {
+      "from": "E",
+      "length": 0.1,
+      "angle": 0,
+      "spacing": 0.00125,
+      "name": "F"
+    },
+    {
+      "from": "F",
+      "length": 0.1,
+      "angle": 90,
+      "spacing": 0.00125,
+      "name": "G"
+    }
+  ]
+}

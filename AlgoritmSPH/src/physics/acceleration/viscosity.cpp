@@ -3,8 +3,8 @@
 
 void viscosity(std::vector<Particle>& particles, double dr,
                int nBoundary, int nParticles) {
-    double alphapi = 1.0;
-    double betapi  = 1.0;
+    double alphapi = 1.0e-2;
+    double betapi  = 1.0e-2;
     double eps2 = 0.01 * dr * dr;
 
     for (int i = nBoundary; i < nParticles; i++) {

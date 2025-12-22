@@ -1,44 +1,40 @@
-import numpy as np
+import math
 
-def characteristic_vel(H_max_fluid, g, L_max):
-    """
-    Args:
-        H_max_fluid (_type_): Altura máxima del fluido para aplicar la ley de Torricelli
-        g (_type_): aceleración gravitacional
-        L_max (_type_): Tamaño máximo representativo del sistema de simulación.
-    """
-    torricelli_v = np.sqrt(2*g*H_max_fluid)
+def calculate_params(
+    U_max, Ma,
+    rho0,
+    h, dx, dy,
+    vx, vy,
+    alpha, beta,
+    f_accel
+):
+    # Velocidad del sonido
+    c = U_max / Ma
     
-    potentialE_v = np.sqrt(g*L_max)
-    
-    if torricelli_v == potentialE_v:
-        return torricelli_v
-    else:
-        return (torricelli_v + potentialE_v)/2
+    # Constante B
+    gamma = 7
+    B = rho0 * c**2 / gamma
 
-def sound_velocity_Ma(H_max_fluid, g, L_max, Mach=0.1):
-    """
-    Realiza el cálculo de la velocidad de sonido tal que el número Mach,
-    dentro del régimen de débilmente compresible.
-    
-    Hace uso de characteristic_vel.
-    """
-    U = characteristic_vel(H_max_fluid, g, L_max)
-    
-    if Mach > 0.1:
-        print("El número Mach no es adecuado para el sistema")
-    else:
-        c = U / Mach
-    
-    return c
+    # Phi_ij
+    phi_ij = h * (vx * dx + vy * dy) / (dx**2 + dy**2)
 
-def Froude_number(ch_velocity, g, L_max):
-    """
-    Se calcula el número de Froude para determinar si los parámetros
-    son compatibles con el intervalo 
+    # Delta t por CFL
+    dt_CV = h / (c + 0.6 * (alpha * c + beta * abs(phi_ij)))
 
-    Args:
-        ch_velocity (_type_): _description_
-        g (_type_): _description_
-        L_max (_type_): _description_
-    """
+    # Delta t por fuerzas
+    dt_f = math.sqrt(h / f_accel)
+
+    # Delta t final
+    lambda1 = 0.4
+    lambda2 = 0.25
+    
+    dt = min(lambda1 * dt_CV, lambda2 * dt_f)
+
+    return {
+        "c": c,
+        "B": B,
+        "phi_ij": phi_ij,
+        "dt_CV": dt_CV,
+        "dt_f": dt_f,
+        "dt": dt
+    }
