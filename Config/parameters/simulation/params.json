@@ -15,7 +15,7 @@
   "physics": {
     "density_type": "normalized",
     "gravity_magnitude": 9.87,
-    "EoS": "Monaghan"
+    "EoS": "Adami"
   },
 
   "integrator": {

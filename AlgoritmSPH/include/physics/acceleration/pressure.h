@@ -22,7 +22,7 @@ struct KorzaniParams {
     double gamma;     // Exponente
 };
 // --- Funciones para configurar parámetros ---
-void setAdamiParams(double B, double c, double rho0, double gamma, double g);
+void setAdamiParams(double B, double c, double rho0, double gamma);
 void setKorzaniParams(double ca_factor, double rho0, double gamma);
 
 // --- Función principal de presión ---

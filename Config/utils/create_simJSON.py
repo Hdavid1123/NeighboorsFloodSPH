@@ -56,8 +56,8 @@ def create_simulation_config(
     params = json.loads(json.dumps(base_params))  # copia profunda
 
     # --- 5. Modificar parámetros obligatorios ---
-    params["physics"]["eos_params"]["monaghan"]["B"] = float(B)
-    params["physics"]["eos_params"]["monaghan"]["c"] = float(c)
+    params["physics"]["eos_params"]["Adami"]["B"] = float(B)
+    params["physics"]["eos_params"]["Adami"]["c"] = float(c)
     params["physics"]["gravity_magnitude"] = float(g)
     params["integrator"]["n_steps"] = int(steps)
     params["integrator"]["dt"] = float(dt)

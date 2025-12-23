@@ -10,4 +10,4 @@ void computeNavierStokes(std::vector<Particle>& particles,
                          int step,            
                          double g,            
                          double fluidHeight,  // altura de la columna de fluido
-                         EOSType eosType);    // tipo de EOS a usar (Monaghan o Korzani)
+                         EOSType eosType);    // tipo de EOS a usar (Adami o Korzani)

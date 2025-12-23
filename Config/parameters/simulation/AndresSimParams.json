@@ -21,13 +21,13 @@
   "physics": {
     "density_type": "normalized",
     "gravity_magnitude": -9.81,
-    "EoS": "Monaghan",
+    "EoS": "Adami",
 
     "eos_params": {
       "rho0": 1000.0,
       "gamma": 7.0,
 
-      "monaghan": {
+      "Adami": {
         "B": 1.0,
         "c": 0.01
         },

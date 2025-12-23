@@ -71,15 +71,15 @@ int main(int argc, char* argv[]) {
 
         // Convertir el tipo de EoS desde string a enum
         EOSType eos_type;
-        if (eos_type_str == "Monaghan") {
-            eos_type = EOSType::Monaghan;
+        if (eos_type_str == "Adami") {
+            eos_type = EOSType::Adami;
         } 
         else if (eos_type_str == "Korzani") {
             eos_type = EOSType::Korzani;
         } 
         else {
             throw std::runtime_error("Tipo de EoS desconocido: " + eos_type_str +
-                                    ". Opciones válidas: 'Monaghan' o 'Korzani'.");
+                                    ". Opciones válidas: 'Adami' o 'Korzani'.");
         }
 
         // 4. Leer parámetros físicos del bloque "eos_params"
@@ -87,11 +87,11 @@ int main(int argc, char* argv[]) {
         double rho0 = eos_params.value("rho0", 1000.0);
         double gamma = eos_params.value("gamma", 7.0);
 
-        if (eos_type == EOSType::Monaghan) {
-            double B    = eos_params["monaghan"].value("B", 1.0);
-            double c    = eos_params["monaghan"].value("c", 0.01);
-            setMonaghanParams(B, c, rho0, gamma);
-            std::cout << "[INFO] Configurada EoS Monaghan con parámetros:\n"
+        if (eos_type == EOSType::Adami) {
+            double B    = eos_params["Adami"].value("B", 1.0);
+            double c    = eos_params["Adami"].value("c", 0.01);
+            setAdamiParams(B, c, rho0, gamma);
+            std::cout << "[INFO] Configurada EoS Adami con parámetros:\n"
               << "       B=" << B << ", c=" << c << ", rho0=" << rho0 
               << ", gamma=" << gamma << "\n";
         }
