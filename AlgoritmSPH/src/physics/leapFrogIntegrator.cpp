@@ -9,7 +9,7 @@ static void drift(std::vector<Particle>& particles, double dt)
         if (p.type != Particle::Fluid) continue;
         p.pos[0] += 0.5 * p.vel[0] * dt;
         p.pos[1] += 0.5 * p.vel[1] * dt;
-        p.internalE += 0.5 * dt * p.dinternalE;
+        //p.internalE += 0.5 * dt * p.dinternalE;
     }
 }
 

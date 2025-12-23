@@ -21,7 +21,7 @@ void computeNavierStokes(std::vector<Particle>& particles,
 
         pi.accel[0] = 0.0;
         pi.accel[1] = g; // gravedad, incluir signo en params
-        pi.dinternalE = 0.0;
+        //pi.dinternalE = 0.0;
 
         // 3. Loop sobre vecinos
         for (size_t k = 0; k < pi.neighbors.size(); k++) {
@@ -39,7 +39,7 @@ void computeNavierStokes(std::vector<Particle>& particles,
             double vdw = (pi.vel[0] - pj.vel[0]) * pi.dWx[k] +
                          (pi.vel[1] - pj.vel[1]) * pi.dWy[k];
 
-            pi.dinternalE += 0.5 * pj.mass * pij * vdw;
+            //pi.dinternalE += 0.5 * pj.mass * pij * vdw;
         }
     }
 }
