@@ -30,7 +30,7 @@ void integrateStep(std::vector<Particle>& particles,
                    int step,
                    double dt,
                    double g,
-                   double dr,
+                   double alpha,
                    double fluidHeight,
                    EOSType eosType)
 {
@@ -39,7 +39,7 @@ void integrateStep(std::vector<Particle>& particles,
 
     // 2. Cálculo de las aceleraciones (NS, Viscosity, Boundary Interaction, etc.)
     computeAcceleration(particles, nBoundary, nParticles,
-                        step, dt, g, dr, fluidHeight, eosType);
+                        step, dt, g, alpha, fluidHeight, eosType);
     
     // 3. Aporte de la aceleración en la velocidad
     kick(particles, dt);

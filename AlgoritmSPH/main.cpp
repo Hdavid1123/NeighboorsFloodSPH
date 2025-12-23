@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         
         double dt                        = params["integrator"]["dt"];
         int nSteps                       = params["integrator"]["n_steps"];
-        
+        double alpha                     = params["viscosity"]["alpha"];
         double g                         = params["physics"]["gravity_magnitude"];
         bool enable_neighbor_test        = params["simulation"]["enable_neighbor_test"];
         
@@ -154,7 +154,7 @@ int main(int argc, char* argv[]) {
 
             // 7.4. Integración de fuerzas
             integrateStep(particles, nBoundary, nParticles, step,
-                          dt, g, dr, fluidHeight, eos_type);
+                          dt, g, alpha, fluidHeight, eos_type);
 
             // 7.5. Guarda el estado actual
             printState(particles, step, output_dir_sim);

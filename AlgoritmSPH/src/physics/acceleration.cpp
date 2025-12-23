@@ -12,7 +12,7 @@ void computeAcceleration(std::vector<Particle>& particles,
                          int step,
                          double dt,
                          double g,
-                         double dr,
+                         double alpha,
                          double fluidHeight,
                          EOSType eosType)
 {
@@ -21,7 +21,7 @@ void computeAcceleration(std::vector<Particle>& particles,
                         step, g, fluidHeight, eosType);
 
     // 2. Viscosidad del fluido.
-    viscosity(particles, dr, nBoundary, nParticles);
+    viscosity(particles, alpha, nBoundary, nParticles);
 
     // 3. Interacción con fronteras.
     //boundaryInteraction(particles, dr, nBoundary, nParticles);
