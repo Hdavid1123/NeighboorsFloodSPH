@@ -28,16 +28,14 @@ void computeNavierStokes(std::vector<Particle>& particles,
             int j = pi.neighbors[k];
             Particle& pj = particles[j];
 
-            if (pj.type != Particle::Fluid) continue;      // Las fronteras no aportan al cálculo de presión.
-
             double pij = (pi.pressure / (pi.rho * pi.rho)) +
                          (pj.pressure / (pj.rho * pj.rho));
 
             pi.accel[0] -= pj.mass * pij * pi.dWx[k];
             pi.accel[1] -= pj.mass * pij * pi.dWy[k];
 
-            double vdw = (pi.vel[0] - pj.vel[0]) * pi.dWx[k] +
-                         (pi.vel[1] - pj.vel[1]) * pi.dWy[k];
+            //double vdw = (pi.vel[0] - pj.vel[0]) * pi.dWx[k] +
+            //             (pi.vel[1] - pj.vel[1]) * pi.dWy[k];
 
             //pi.dinternalE += 0.5 * pj.mass * pij * vdw;
         }

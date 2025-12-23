@@ -24,7 +24,7 @@ void computeAcceleration(std::vector<Particle>& particles,
     viscosity(particles, dr, nBoundary, nParticles);
 
     // 3. Interacción con fronteras.
-    boundaryInteraction(particles, dr, nBoundary, nParticles);
+    //boundaryInteraction(particles, dr, nBoundary, nParticles);
 
     // 4. Corrección de velocidad XSPH
     meanVelocityXSPH(particles, nBoundary, nParticles);

@@ -4,12 +4,12 @@
 
 // --- Tipos de ecuación de estado disponibles ---
 enum class EOSType {
-    Monaghan,  // Monaghan (1992) - estándar
+    Adami,  // Adami (2012) - estándar Tait + presión de fronteras extrapoladas
     Korzani    // Korzani (2014) - adaptado a caída libre
 };
 
 // --- Estructuras con parámetros de EoS ---
-struct MonaghanParams {
+struct AdamiParams {
     double B;      // Presión base
     double c;      // Velocidad del sonido
     double rho0;   // Densidad de referencia
@@ -22,7 +22,7 @@ struct KorzaniParams {
     double gamma;     // Exponente
 };
 // --- Funciones para configurar parámetros ---
-void setMonaghanParams(double B, double c, double rho0, double gamma);
+void setAdamiParams(double B, double c, double rho0, double gamma, double g);
 void setKorzaniParams(double ca_factor, double rho0, double gamma);
 
 // --- Función principal de presión ---
