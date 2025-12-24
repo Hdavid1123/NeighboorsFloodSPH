@@ -12,6 +12,7 @@ def create_simulation_config(
     steps: int,
     g: float = -9.81,
     dt: float = 1e-5,
+    alpha: float = 0.1,
     project_root: Path = None,
     project_dir: Path = None,
     output_tests: str = None,
@@ -61,7 +62,8 @@ def create_simulation_config(
     params["physics"]["gravity_magnitude"] = float(g)
     params["integrator"]["n_steps"] = int(steps)
     params["integrator"]["dt"] = float(dt)
-
+    params["viscosity"]["alpha"] = float(alpha)
+    
     # --- 6. Parámetros opcionales ---
     if neighbor_method is not None:
         params["neighbors"]["search_method"] = str(neighbor_method)
