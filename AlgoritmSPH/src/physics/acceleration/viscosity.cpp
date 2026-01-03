@@ -32,7 +32,7 @@ void viscosity(std::vector<Particle>& particles,
             double Piij = -nu * vijrij / (r2 + eps * hij * hij);
 
             pi.accel[0] -= pj.mass * Piij * pi.dWx[k];
-            pi.accel[1] -= pj.mass * Piij * pi.dWx[k];
+            pi.accel[1] -= pj.mass * Piij * pi.dWy[k];
         }
     }
 }
