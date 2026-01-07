@@ -25,9 +25,9 @@ void viscosity(std::vector<Particle>& particles,
             double r2 = xij*xij + yij*yij;
             double hij = 0.5 * (pi.h + pj.h);
             double cij = 0.5 * (pi.soundVel + pj.soundVel);
-            double rhoij = pi.rho + pj.rho;
+            double rhoij = 0.5 * (pi.rho + pj.rho);
 
-            double nu = 2.0 * alpha * hij * cij / rhoij;
+            double nu = alpha * hij * cij / rhoij;
 
             double Piij = -nu * vijrij / (r2 + eps * hij * hij);
 
