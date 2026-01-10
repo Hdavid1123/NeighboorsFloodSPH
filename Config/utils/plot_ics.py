@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import ScalarFormatter
 
-def plot_ics(archivo_txt, particle_size=6, xlim=None, ylim=None):
+def plot_ics(archivo_txt, title=None, particle_size=6, xlim=None, ylim=None):
     df = pd.read_csv(archivo_txt, sep=" ")
 
     df_fluid = df[df["type"] == 0]
@@ -20,7 +20,10 @@ def plot_ics(archivo_txt, particle_size=6, xlim=None, ylim=None):
 
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
-    ax.set_title("Distribución de partículas iniciales")
+    if title is not None:
+        ax.set_title(title)
+    else:
+        ax.set_title("Distribución de partículas iniciales")
     ax.legend()
     ax.grid(True)
 

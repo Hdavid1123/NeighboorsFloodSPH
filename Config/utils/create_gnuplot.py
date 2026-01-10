@@ -65,7 +65,6 @@ def generar_script_gnuplot(ruta_archivo_base,
 retardo = {retardo}
 
 set terminal qt size 800,800 enhanced font 'Verdana,10'
-set size square
 
 do for [i=0:lim]{{
   titulo = sprintf("paso = %.4d - tiempo = %.5f", i, i*5e-5)
