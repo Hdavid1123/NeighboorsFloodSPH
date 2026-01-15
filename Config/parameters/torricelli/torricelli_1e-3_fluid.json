@@ -1,0 +1,24 @@
+{
+  "nx": 40,
+  "ny": 40,
+  "flag_N": "False",
+  "espaciado": 2.5e-05,
+  "vertices": {
+    "inf-izq": [
+      5e-5,
+      -4.5e-4
+    ],
+    "inf-der": [
+      9.5e-4,
+      -4.5e-4
+    ],
+    "sup-der": [
+      9.5e-4,
+      4.5e-4
+    ],
+    "sup-izq": [
+      5e-5,
+      4.5e-4
+    ]
+  }
+}

@@ -27,13 +27,13 @@ static void computeMonaghanPressure(std::vector<Particle>& particles,
     const auto& params = g_monaghanParams;
 
     // Inicializar presión en fronteras
-    /* if (step == 0) {
+    if (step == 0) {
         for (int i = 0; i < nBoundary; ++i) {
             Particle& pi = particles[i];
             pi.soundVel = params.c;
             pi.pressure = 0.0;
         }
-    } */
+    }
 
     // Presión en partículas de fluido
     // Anteriormente la cuenta iba desde nBoundary para saltarla.
