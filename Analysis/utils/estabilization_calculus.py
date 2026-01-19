@@ -121,67 +121,37 @@ def analyze_density_simulation(sim_folder: Path,
         "valor_promedio_threshold": valor_promedio_threshold
     }
     
-def find_stable_amplitude_step(result, threshold_pct=1.0, verbose=True):
+def find_stable_wave_relative_to_mean(result, threshold_pct=1.0, verbose=True):
     """
-    Encuentra el primer índice donde la amplitud entre ondas consecutivas
-    varía menos de un porcentaje dado, y devuelve el valor medio en y
-    de la onda correspondiente.
-
-    Parámetros
-    ----------
-    result : dict
-        Salida de analyze_density_simulation
-    threshold_pct : float
-        Umbral porcentual (%)
-    verbose : bool
-        Imprime el resultado relevante
-
-    Returns
-    -------
-    dict
-        {
-            'index': índice de la onda estable,
-            'y_mean': valor medio en y de la onda,
-            'amplitud': amplitud de la onda,
-            'dupla': dupla asociada,
-            'variacion_pct': variación relativa
-        }
+    Encuentra la primera onda cuya amplitud es menor que un porcentaje
+    del valor medio de la propia onda.
     """
 
     y_smooth = result["y_smooth"]
     duplas = result["duplas"]
 
-    # Amplitud y promedio central de cada onda
-    amplitudes = []
-    y_means = []
+    for i, (j, k) in enumerate(duplas):
 
-    for (j, k) in duplas:
-        amplitudes.append(abs(y_smooth[j] - y_smooth[k]))
-        y_means.append(0.5 * (y_smooth[j] + y_smooth[k]))
-
-    # Comparar amplitudes consecutivas
-    for i in range(len(amplitudes) - 1):
-
-        variacion_pct = 100 * abs(amplitudes[i + 1] - amplitudes[i]) / amplitudes[i]
+        amplitud = abs(y_smooth[j] - y_smooth[k])
+        y_mean = 0.5 * (y_smooth[j] + y_smooth[k])
+        variacion_pct = 100 * amplitud / y_mean
 
         if variacion_pct < threshold_pct:
 
-            index_estable = i + 1
-
             if verbose:
                 print(
-                    f"El régimen estable comienza en la onda {index_estable}\n"
-                    f"Valor medio de la onda = {y_means[index_estable]:.6f}\n"
-                    f"Amplitud = {amplitudes[index_estable]:.6e}\n"
+                    f"El régimen estable comienza en la onda {i}\n"
+                    f"Valor medio de la onda = {y_mean:.6f}\n"
+                    f"Amplitud = {amplitud:.6e}\n"
                     f"Variación relativa = {variacion_pct:.3f}%\n"
-                    f"Dupla asociada = {duplas[index_estable]}"
+                    f"Dupla asociada = {duplas[i]}"
                 )
 
             return {
-                "index": index_estable,
-                "y_mean": y_means[index_estable],
-                "amplitud": amplitudes[index_estable],
-                "dupla": duplas[index_estable],
+                "index": i,
+                "y_mean": y_mean,
+                "amplitud": amplitud,
+                "dupla": duplas[i],
                 "variacion_pct": variacion_pct
             }
 
@@ -189,8 +159,6 @@ def find_stable_amplitude_step(result, threshold_pct=1.0, verbose=True):
         print(f"No se encontró estabilidad con umbral {threshold_pct}%")
 
     return None
-
-
 
     
 def plot_density_with_peaks(result):

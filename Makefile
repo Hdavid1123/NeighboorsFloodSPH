@@ -9,7 +9,7 @@ OBJDIR = build
 OBJ = $(patsubst %.cpp,$(OBJDIR)/%.o,$(SRC))
 
 # Ejecutable
-TARGET = sim0pBoundLJ
+TARGET = sim0pBoundLJ_qt-3
 
 all: $(TARGET)
 
