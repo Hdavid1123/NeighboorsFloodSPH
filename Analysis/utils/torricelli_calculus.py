@@ -82,82 +82,110 @@ def analizar_altura_fluido(
         "altura_fluido": altura_fluido,
         "n_particulas_superficie": len(df_superficie)
     }
-    
   
-def calcular_velocidad_salida(
-    archivos_txt,
-    h,
-    dt,
-    x_hole=None,
-    id_particula=None,
-    min_puntos=6
+
+# ------------------------------------------------
+# CALCULO DE LA VELOCIDAD INCIAL DE LAS PARTÍCULAS
+# ------------------------------------------------
+
+from pathlib import Path
+import pandas as pd
+import re
+
+def extraer_trayectorias_particulas(
+    path_states,
+    df_particulas_inicial,
+    pattern="state_*.txt"
 ):
     """
-    Calcula la velocidad inicial de salida mediante ajuste cuadrático
-    y(t) = a t^2 + b t + c
+    Extrae la trayectoria de un conjunto de partículas SPH
+    identificadas por su ID a lo largo de múltiples pasos temporales.
+
+    Parámetros
+    ----------
+    path_states : str o Path
+        Directorio donde están los archivos state_****.txt
+    df_particulas_inicial : DataFrame
+        DataFrame con las partículas a seguir (debe contener columna 'id')
+    pattern : str
+        Patrón de archivos (por defecto 'state_*.txt')
+
+    Retorna
+    -------
+    DataFrame
+        Columnas: step, id, posx, posy
     """
-
-    dfs = []
-    for i, archivo in enumerate(archivos_txt):
-        df = pd.read_csv(archivo, sep=r"\s+")
-        df["step"] = i
-        dfs.append(df)
-
-    df_all = pd.concat(dfs, ignore_index=True)
-
-    # =========================
-    # 2. Determinar x_hole
-    # =========================
-    if x_hole is None:
-        df_hole = df_all[df_all["type"] == -1]
-        x_hole = df_hole["posx"].mean()
-
-    # =========================
-    # 3. Detectar partículas candidatas
-    # =========================
-    df_fluido = df_all[df_all["type"] == 0]
-
-    mask_x = (
-        (df_fluido["posx"] >= x_hole - 2*h) &
-        (df_fluido["posx"] <= x_hole + 2*h)
+    path_states = Path(path_states)
+    ids_seguidos = df_particulas_inicial["id"].unique()
+    files = sorted(
+        path_states.glob(pattern),
+        key=lambda f: int(re.search(r"\d+", f.stem).group())
     )
 
-    df_candidatas = df_fluido[mask_x]
+    trayectorias = []
 
-    # =========================
-    # 4. Seleccionar partícula
-    # =========================
-    if id_particula is None:
-        # Elegir la que aparece primero en el tiempo
-        id_particula = (
-            df_candidatas
-            .groupby("id")["step"]
-            .min()
-            .idxmin()
+    for file in files:
+        step = int(re.search(r"\d+", file.stem).group())
+
+        df = pd.read_csv(file, sep=r"\s+")
+        df_sel = df[df["id"].isin(ids_seguidos)]
+
+        if df_sel.empty:
+            continue
+
+        trayectorias.append(
+            df_sel[["id", "posx", "posy"]].assign(step=step)
         )
 
-    df_trayectoria = df_candidatas[df_candidatas["id"] == id_particula]
+    if not trayectorias:
+        return pd.DataFrame(columns=["step", "id", "posx", "posy"])
 
-    if len(df_trayectoria) < min_puntos:
-        raise ValueError("No hay suficientes puntos para el ajuste.")
+    return pd.concat(trayectorias, ignore_index=True)
 
-    t = df_trayectoria["step"].values * dt
-    y = df_trayectoria["posy"].values
+import numpy as np
 
-    # 6. Ajuste por mínimos cuadrados
-    coef = np.polyfit(t, y, 2)
-    a, b, c = coef
+def cortar_trayectorias_en_minimo_y(
+    df_trayectorias,
+    tol=1e-6,
+    min_steps=3
+):
+    """
+    Corta cada trayectoria cuando y deja de decrecer
+    (primer mínimo físico).
 
-    g_estimado = 2 * a
-    v0 = b
-    y0 = c
+    Parámetros
+    ----------
+    df_trayectorias : DataFrame
+        Columnas: step, id, posx, posy
+    tol : float
+        Tolerancia para ignorar ruido numérico
+    min_steps : int
+        Número mínimo de puntos antes de permitir el corte
 
-    return {
-        "id_particula": id_particula,
-        "v0": v0,
-        "g_estimado": g_estimado,
-        "y0": y0,
-        "coeficientes": coef,
-        "t": t,
-        "y": y
-    }
+    Retorna
+    -------
+    DataFrame
+        Trayectorias cortadas
+    """
+
+    trayectorias_cortadas = []
+
+    for pid, df_p in df_trayectorias.groupby("id"):
+        df_p = df_p.sort_values("step").reset_index(drop=True)
+
+        y = df_p["posy"].values
+        dy = np.diff(y)
+
+        # Buscar primer índice donde y empieza a crecer
+        corte = None
+        for i in range(min_steps - 1, len(dy)):
+            if dy[i] > tol:
+                corte = i + 1
+                break
+
+        if corte is None:
+            trayectorias_cortadas.append(df_p)
+        else:
+            trayectorias_cortadas.append(df_p.iloc[:corte + 1])
+
+    return pd.concat(trayectorias_cortadas, ignore_index=True)
