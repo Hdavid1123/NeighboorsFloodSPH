@@ -1,0 +1,55 @@
+{
+  "io": {
+    "input_file": "Output/init_cond/simAndres.txt",
+    "output_dir_simulation": "Output/simulation"
+  },
+
+  "kernel": {
+    "type": "cubicSpline",
+    "h_factor": 1.1,
+    "test_enabled": true,
+    "output_dir": "Output/tests"
+  },
+
+  "neighbors": {
+    "search_method": "brute_force",
+    "kappa": 2.0,
+    "epsilon": 1e-10,
+    "test_NN_output_dir": "Output/tests"
+  },
+
+  "physics": {
+    "density_type": "normalized",
+    "gravity_magnitude": -9.81,
+    "EoS": "Adami",
+
+    "eos_params": {
+      "rho0": 1000.0,
+      "gamma": 7.0,
+
+      "Adami": {
+        "B": 1.0,
+        "c": 0.01
+        },
+
+      "korzani": {
+        "ca_factor": 10.0
+      }
+    }
+  },
+
+  "viscosity":{
+    "alpha": 0.1
+  },
+
+  "integrator": {
+    "method": "leapfrog",
+    "dt": 5e-5,
+    "n_steps": 5000
+  },
+
+  "simulation": {
+    "output_frequency": 1,
+    "enable_neighbor_test": true
+  }
+}
