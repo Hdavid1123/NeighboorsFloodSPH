@@ -75,12 +75,14 @@ def plot_step_resaltado(
                    s=particle_size, c=color_resaltado)
 
     # ---------- FORMATO ----------
-    ax.set_xlabel("x [m]")
-    ax.set_ylabel("y [m]")
+    ax.set_xlabel("x [m]", fontsize=15)
+    ax.set_ylabel("y [m]", fontsize=15)
 
-    ax.set_title(title if title is not None else "Distribución de partículas")
+    ax.set_title(title if title is not None else "Distribución de partículas",
+                 fontsize=16)
 
-    ax.legend()
+    ax.legend(fontsize=12)
+    ax.tick_params(axis="both", which="major", labelsize=13)
     ax.grid(True)
     ax.set_aspect("equal", adjustable="datalim")
 

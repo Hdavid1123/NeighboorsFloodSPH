@@ -161,22 +161,36 @@ def find_stable_wave_relative_to_mean(result, threshold_pct=1.0, verbose=True):
     return None
 
     
-def plot_density_with_peaks(result):
+def plot_density_with_peaks(
+    result,
+    xlabel=r"Paso de tiempo $(5 \times 10^{-5}\,\mathrm{s})\ \mathrm{cada\ uno}$",
+    ylabel=r"Densidad promedio $\left[\mathrm{kg\,m^{-3}}\right]$",
+    title="Evolución de la densidad con picos detectados"
+):
     t = result["t"]
     y = result["rho_avg"]
     y_smooth = result["y_smooth"]
     peaks = result["peaks_filtered"]
 
-    plt.figure(figsize=(10,5))
-    plt.plot(t, y, label="Densidad promedio original", alpha=0.4)
-    plt.plot(t, y_smooth, label="Señal suavizada", linewidth=2)
-    plt.scatter(t[peaks], y_smooth[peaks], color="red", s=20, label="Picos detectados")
+    fig, ax = plt.subplots(figsize=(10, 5))
 
-    plt.xlabel("Índice de estado (tiempo relativo)")
-    plt.ylabel("Densidad promedio")
-    plt.title("Evolución de la densidad con picos detectados")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
+    ax.plot(t, y, label="Densidad promedio original", alpha=0.4)
+    ax.plot(t, y_smooth, label="Señal suavizada", linewidth=2)
+    ax.scatter(
+        t[peaks], y_smooth[peaks],
+        color="red", s=20, label="Picos detectados"
+    )
+
+    # Labels y título parametrizados
+    ax.set_xlabel(xlabel, fontsize=16)
+    ax.set_ylabel(ylabel, fontsize=16)
+    ax.set_title(title, fontsize=20)
+
+    # Ticks y leyenda
+    ax.tick_params(axis='both', which='major', labelsize=13)
+    ax.legend(fontsize=15)
+
+    ax.grid(True)
+    fig.tight_layout()
     plt.show()
 

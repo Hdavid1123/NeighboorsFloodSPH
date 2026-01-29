@@ -138,12 +138,16 @@ def detectar_superficie_libre(
         ax.axhline(y_fondo, color="purple", linestyle="--", label="Fondo")
         ax.axhline(y_ref_final, color="red", linestyle=":", label="Inicio superficie")
 
-        ax.set_xlabel("x [m]")
-        ax.set_ylabel("y [m]")
-        ax.set_title(title or "Detección de superficie libre")
+        # Labels y título (MISMO TAMAÑO que plot_ics)
+        ax.set_xlabel("x [m]", fontsize=15)
+        ax.set_ylabel("y [m]", fontsize=15)
+        ax.set_title(title or "Detección de superficie libre", fontsize=16)
 
-        ax.legend()
+        # Ticks, leyenda y grilla (MISMO TAMAÑO)
+        ax.tick_params(axis="both", which="major", labelsize=13)
+        ax.legend(fontsize=12)
         ax.grid(True)
+
         ax.set_aspect("equal", adjustable="datalim")
 
         if xlim is not None:

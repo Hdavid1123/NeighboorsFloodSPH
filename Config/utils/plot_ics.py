@@ -18,13 +18,15 @@ def plot_ics(archivo_txt, title=None, particle_size=6, xlim=None, ylim=None):
     ax.scatter(df_hole["posx"], df_hole["posy"],
                s=particle_size, c="red", label="Agujero (type=-1)")
 
-    ax.set_xlabel("x [m]")
-    ax.set_ylabel("y [m]")
+    ax.set_xlabel("x [m]", fontsize=15)
+    ax.set_ylabel("y [m]", fontsize=15)
     if title is not None:
-        ax.set_title(title)
+        ax.set_title(title, fontsize=16)
     else:
-        ax.set_title("Distribución de partículas iniciales")
-    ax.legend()
+        ax.set_title("Distribución de partículas iniciales", fontsize=16)
+        
+    ax.tick_params(axis='both', which='major', labelsize=13)
+    ax.legend(fontsize=12)
     ax.grid(True)
 
     # Aspect ratio sin ignorar tus límites

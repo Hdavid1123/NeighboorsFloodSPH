@@ -34,33 +34,53 @@ def analizar_altura_fluido(
     altura_fluido = y_superficie_prom - y_fondo
 
     # 5. Gráfica de verificación
-    
     if mostrar_plot:
         fig, ax = plt.subplots(figsize=(6, 8))
 
-        ax.scatter(df_boundary["posx"], df_boundary["posy"],
-                   s=particle_size, c="black", label="Frontera (type=1)")
-        ax.scatter(df_fluid["posx"], df_fluid["posy"],
-                   s=particle_size, c="blue", label="Fluido (type=0)")
-        ax.scatter(df_hole["posx"], df_hole["posy"],
-                   s=particle_size, c="red", label="Agujero (type=-1)")
+        ax.scatter(
+            df_boundary["posx"], df_boundary["posy"],
+            s=particle_size, c="black", label="Frontera (type=1)"
+        )
+        ax.scatter(
+            df_fluid["posx"], df_fluid["posy"],
+            s=particle_size, c="blue", label="Fluido (type=0)"
+        )
+        ax.scatter(
+            df_hole["posx"], df_hole["posy"],
+            s=particle_size, c="red", label="Agujero (type=-1)"
+        )
 
         # Líneas de referencia
-        ax.axhline(y_superficie_prom, color="green", linestyle="--",
-                   linewidth=2, label="Superficie promedio")
-        ax.axhline(y_fondo, color="purple", linestyle="--",
-                   linewidth=2, label="Fondo")
+        ax.axhline(
+            y_superficie_prom,
+            color="green",
+            linestyle="--",
+            linewidth=2,
+            label="Superficie promedio"
+        )
+        ax.axhline(
+            y_fondo,
+            color="purple",
+            linestyle="--",
+            linewidth=2,
+            label="Fondo"
+        )
 
-        ax.set_xlabel("x [m]")
-        ax.set_ylabel("y [m]")
+        # Labels y título (MISMO ESTILO que plot_ics)
+        ax.set_xlabel("x [m]", fontsize=15)
+        ax.set_ylabel("y [m]", fontsize=15)
 
-        if title is not None:
-            ax.set_title(title)
-        else:
-            ax.set_title("Altura del fluido – verificación geométrica")
+        ax.set_title(
+            title if title is not None
+            else "Altura del fluido – verificación geométrica",
+            fontsize=16
+        )
 
-        ax.legend()
+        # Ticks, leyenda y grilla
+        ax.tick_params(axis="both", which="major", labelsize=13)
+        ax.legend(fontsize=12)
         ax.grid(True)
+
         ax.set_aspect("equal", adjustable="datalim")
 
         if xlim is not None:
@@ -69,12 +89,13 @@ def analizar_altura_fluido(
             ax.set_ylim(ylim)
 
         ax.xaxis.set_major_formatter(ScalarFormatter(useMathText=True))
-        ax.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+        ax.ticklabel_format(style="sci", axis="x", scilimits=(0, 0))
 
         ax.yaxis.set_major_formatter(ScalarFormatter(useMathText=True))
-        ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
+        ax.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
 
         plt.show()
+
 
     return {
         "y_fondo": y_fondo,
